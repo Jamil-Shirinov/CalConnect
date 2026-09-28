@@ -64,3 +64,8 @@ node_modules/
 # Firebase Admin service account keys (never commit)
 *serviceAccount*.json
 *-firebase-adminsdk-*.json
+
+# Unnecessary Agent Skills
+.agents/
+.claude/skills/
+skills-lock.json
