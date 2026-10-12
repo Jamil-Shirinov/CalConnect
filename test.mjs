@@ -15,6 +15,7 @@ if (!TEST_EMAIL || !TEST_PASSWORD) {
 
 try {
   await signInWithEmailAndPassword(auth, TEST_EMAIL, TEST_PASSWORD);
+  console.log("UID:", auth.currentUser.uid);
   const isAdmin = await checkIsAdmin();
   console.log("Signed in. isAdmin =", isAdmin);
 
