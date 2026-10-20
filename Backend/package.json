@@ -1,14 +1,21 @@
 {
-  "name": "calconnect-backend",
+  "name": "calconnect",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
+    "lint": "node --check scripts/add-feedback.js && node --check src/feedback.js",
+    "typecheck": "tsc --noEmit",
+    "add-feedback": "node scripts/add-feedback.js",
     "test:rules": "firebase emulators:exec --only firestore --project demo-calconnect \"node --test tests/*.test.mjs\""
   },
   "dependencies": {
-    "firebase": "^12.19.0"
+    "firebase": "^12.19.0",
+    "firebase-admin": "^13.0.0"
   },
   "devDependencies": {
-    "@firebase/rules-unit-testing": "^5.0.0"
+    "@firebase/rules-unit-testing": "^5.0.0",
+    "@types/node": "^22.7.4",
+    "typescript": "^5.6.3"
   }
 }
