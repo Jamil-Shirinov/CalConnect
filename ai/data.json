@@ -1,0 +1,21 @@
+{
+  "student": {
+    "name": "Alex Chen",
+    "major": "EECS (Sophomore)",
+    "course": "CS 61B",
+    "mode": "In-person (Moffitt Library)",
+    "max_rate": 35,
+    "style": "project-debugging",
+    "available": ["Tue 4-7 PM", "Thu 5-8 PM"]
+  },
+  "tutor": {
+    "name": "Sarah Lin",
+    "major": "CS & Data Science (Senior)",
+    "courses_taught": ["CS 61A", "CS 61B"],
+    "mode": "In-person (Main Stacks / Moffitt)",
+    "rate": 30,
+    "style": "project-debugging",
+    "available": ["Tue 4-6 PM", "Fri 1-4 PM"]
+  }
+}
+
