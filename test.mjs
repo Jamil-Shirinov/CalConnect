@@ -19,20 +19,35 @@ try {
   const isAdmin = await checkIsAdmin();
   console.log("Signed in. isAdmin =", isAdmin);
 
+  // 1. Create standard test announcement
   const ref = await createAnnouncement({
-    title: "Test",
-    description: "Hello from the test script",
+    title: "Test Login",
+    description: "Test Description",
     category: "general",
-    site: "TVS",
+    site: "CalConnect.com",
     adminOnly: false,
   });
-  console.log("Created:", ref.id);
+  console.log("Created standard announcement:", ref.id);
+
+  // 2. Create test announcement with SendGrid email trigger enabled
+  const emailRef = await createAnnouncement({
+    title: "Live SendGrid Test",
+    description: "Testing automated email notifications from CalConnect!",
+    category: "general",
+    site: "CalConnect.com",
+    adminOnly: false,
+    sendEmail: true,
+    recipientId: auth.currentUser.uid // Using current admin UID (make sure their /users doc has an 'email' field)
+  });
+  console.log("Created email-triggered announcement:", emailRef.id);
 
   const all = await getAllAnnouncements({ isAdmin });
   console.log(`Read ${all.length} announcement(s):`, all);
 
+  // Clean up test documents
   await deleteAnnouncement(ref.id);
-  console.log("Deleted test announcement. Everything works.");
+  await deleteAnnouncement(emailRef.id);
+  console.log("Deleted test announcements; Everything works.");
 } catch (err) {
   console.error("FAILED:", err.code || "", err.message);
   process.exitCode = 1;
