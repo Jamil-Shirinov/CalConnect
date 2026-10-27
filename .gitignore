@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-node_modules
-=======
 # Logs
 logs
 *.log
@@ -72,4 +69,3 @@ node_modules/
 .agents/
 .claude/skills/
 skills-lock.json
->>>>>>> 661ae72eec6cba34c13131b922c733044f215bbf
