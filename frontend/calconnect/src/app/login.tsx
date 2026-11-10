@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
-import { Redirect, useLocalSearchParams } from "expo-router";
+import { Redirect, router, useLocalSearchParams } from "expo-router";
 import { sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
 
 import { Banner, Button, Txt } from "@/components/ui";
@@ -116,7 +116,7 @@ export default function Login() {
           </View>
         )}
 
-        <Pressable onPress={() => setNotice("New accounts open soon. Use a demo account for now.")} style={styles.signup}>
+        <Pressable onPress={() => router.replace("/signup")} style={styles.signup}>
           <Txt w="semibold" size={17} color={colors.white}>Don’t have an account?</Txt>
           <Txt w="bold" size={17} color={colors.white}>Sign Up Now</Txt>
         </Pressable>
