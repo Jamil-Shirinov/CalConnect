@@ -1,0 +1,14 @@
+{
+  "name": "calconnect-backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:rules": "firebase emulators:exec --only firestore --project demo-calconnect \"node --test tests/*.test.mjs\""
+  },
+  "dependencies": {
+    "firebase": "^12.19.0"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0"
+  }
+}
