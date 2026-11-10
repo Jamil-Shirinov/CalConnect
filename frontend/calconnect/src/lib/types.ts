@@ -14,6 +14,8 @@ export type Profile = {
   availability: Slot[];
   format: Format[];
   bio: string;
+  questionnaire?: Record<string, string>;
+  onboardingComplete?: boolean;
 };
 
 export type MatchStatus = "suggested" | "requested" | "accepted" | "declined";

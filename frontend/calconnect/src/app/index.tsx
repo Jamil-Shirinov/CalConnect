@@ -16,7 +16,7 @@ export default function Welcome() {
       <Txt size={15} color="#CFC6E8" style={styles.tagline}>Find the right Berkeley tutor for how you learn.</Txt>
       <View style={styles.buttons}>
         <Button variant="white" title="Login" onPress={() => router.push("/login")} />
-        <Button title="Sign up" onPress={() => router.push("/login?signup=1")} />
+        <Button title="Sign up" onPress={() => router.push("/signup")} />
       </View>
     </View>
   );

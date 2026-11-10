@@ -2,10 +2,8 @@ import { ActivityIndicator, StyleSheet, View, type ColorValue } from "react-nati
 import { Redirect } from "expo-router";
 import { Tabs } from "expo-router/js-tabs";
 import { Ionicons } from "@expo/vector-icons";
-import { signOut } from "firebase/auth";
 
-import { Banner, Button } from "@/components/ui";
-import { auth } from "@/lib/firebase";
+import { Banner } from "@/components/ui";
 import { useStore } from "@/lib/store";
 import { colors, fonts } from "@/lib/theme";
 
@@ -21,14 +19,7 @@ export default function TabsLayout() {
   if (!ready || profile === undefined) {
     return <View style={styles.center}><ActivityIndicator color={colors.navy} size="large" /></View>;
   }
-  if (profile === null) {
-    return (
-      <View style={[styles.center, { padding: 24, gap: 16 }]}>
-        <Banner tone="info">This account doesn't have a profile yet. Log in with a demo account.</Banner>
-        <Button small variant="navy" title="Log out" onPress={() => signOut(auth)} />
-      </View>
-    );
-  }
+  if (profile === null) return <Redirect href="/onboarding" />;
 
   const incoming = matches.filter((m) => m.status === "requested" && m.requestedBy !== user?.uid).length;
   const toConfirm = sessions.filter((s) => s.status === "proposed" && s.proposedBy !== user?.uid && s.end > new Date()).length;
@@ -62,6 +53,7 @@ export default function TabsLayout() {
           options={{ tabBarLabel: "Sessions", tabBarIcon: icon("calendar"), tabBarBadge: toConfirm || undefined }}
         />
         <Tabs.Screen name="messages" options={{ tabBarLabel: "Messages", tabBarIcon: icon("chatbubbles") }} />
+        <Tabs.Screen name="profile" options={{ tabBarLabel: "Profile", tabBarIcon: icon("person") }} />
       </Tabs>
     </View>
   );
