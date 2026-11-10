@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../components/Button';
 import { TextField } from '../../components/TextField';
@@ -10,7 +10,7 @@ import { fonts } from '../../theme/typography';
 import { spacing } from '../../theme/spacing';
 
 export default function Messages() {
-  const { state, sendMessage } = useAppStore();
+  const { state, sendMessage, markRead } = useAppStore();
   const wide = useIsWide();
   const [openId, setOpenId] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
@@ -18,6 +18,10 @@ export default function Messages() {
   const tutorName = (t: Thread) => state.tutors.find(x => x.id === t.tutorId)?.name ?? '';
   const selectedId = openId ?? (wide ? state.threads[0]?.id : undefined);
   const selected = state.threads.find(t => t.id === selectedId);
+
+  useEffect(() => {
+    if (selected && isUnread(selected)) markRead(selected.id);
+  }, [selected, markRead]);
 
   const send = () => {
     if (!selected || !draft.trim()) return;

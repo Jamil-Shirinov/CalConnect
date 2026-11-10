@@ -25,6 +25,7 @@ export type Action =
   | { type: 'sendRequest'; tutorId: string; date: string; course: string }
   | { type: 'checkIn'; sessionId: string }
   | { type: 'sendMessage'; threadId: string; text: string; at: string }
+  | { type: 'markRead'; threadId: string }
   | { type: 'submitFeedback'; form: FeedbackForm }
   | { type: 'updateProfile'; partial: Partial<Student> };
 
@@ -58,6 +59,13 @@ export function appReducer(state: AppState, action: Action): AppState {
         ),
       };
     }
+    case 'markRead':
+      return {
+        ...state,
+        threads: state.threads.map(t =>
+          t.id === action.threadId ? { ...t, lastReadAt: t.messages.at(-1)?.at } : t,
+        ),
+      };
     case 'submitFeedback':
       return { ...state, feedback: [...state.feedback, action.form] };
     case 'updateProfile':
@@ -66,7 +74,8 @@ export function appReducer(state: AppState, action: Action): AppState {
 }
 
 export function isUnread(thread: Thread): boolean {
-  return thread.messages.at(-1)?.from === 'them';
+  const last = thread.messages.at(-1);
+  return last?.from === 'them' && (!thread.lastReadAt || last.at > thread.lastReadAt);
 }
 
 export function upcomingSessions(state: Pick<AppState, 'sessions' | 'today'>): Session[] {
@@ -82,6 +91,7 @@ export interface AppStore {
   sendRequest(tutorId: string, date: string, course: string): void;
   checkIn(sessionId: string): void;
   sendMessage(threadId: string, text: string): void;
+  markRead(threadId: string): void;
   submitFeedback(form: FeedbackForm): void;
   updateProfile(partial: Partial<Student>): void;
 }
@@ -99,6 +109,7 @@ export function AppStoreProvider({ initialState, children }: { initialState?: Ap
       checkIn: sessionId => dispatch({ type: 'checkIn', sessionId }),
       sendMessage: (threadId, text) =>
         dispatch({ type: 'sendMessage', threadId, text, at: new Date().toISOString() }),
+      markRead: threadId => dispatch({ type: 'markRead', threadId }),
       submitFeedback: form => dispatch({ type: 'submitFeedback', form }),
       updateProfile: partial => dispatch({ type: 'updateProfile', partial }),
     }),

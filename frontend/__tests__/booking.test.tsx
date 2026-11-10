@@ -65,3 +65,26 @@ test('Request session from a result card sends a request', async () => {
   fireEvent.press(screen.getByText('Send request'));
   expect(screen.getByText('Request sent')).toBeTruthy();
 });
+
+test('result card only offers dates inside the chosen range', async () => {
+  await renderApp('/booking', makeState());
+  openPanel();
+  fireEvent.press(screen.getByTestId('day-2026-10-19'));
+  fireEvent.press(screen.getByTestId('day-2026-10-24'));
+  fireEvent.press(screen.getByText('Done'));
+  fireEvent.press(screen.getAllByText('Request session')[0]);
+  expect(screen.getByRole('button', { name: '2026-10-20' })).toBeTruthy();
+  expect(screen.queryByRole('button', { name: '2026-10-27' })).toBeNull();
+});
+
+test('result card keeps the applied range while the panel is edited', async () => {
+  await renderApp('/booking', makeState());
+  openPanel();
+  fireEvent.press(screen.getByTestId('day-2026-10-19'));
+  fireEvent.press(screen.getByTestId('day-2026-10-24'));
+  fireEvent.press(screen.getByText('Done'));
+  openPanel();
+  fireEvent.press(screen.getByTestId('day-2026-10-26'));
+  fireEvent.press(screen.getAllByText('Request session')[0]);
+  expect(screen.getByRole('button', { name: '2026-10-20' })).toBeTruthy();
+});

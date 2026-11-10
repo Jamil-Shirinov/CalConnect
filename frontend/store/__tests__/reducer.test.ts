@@ -29,3 +29,11 @@ test('selectors', () => {
   expect(s0.threads.filter(isUnread).map(t => t.id)).toEqual(['th1', 'th3']);
   expect(upcomingSessions(s0).map(x => x.id)).toEqual(['s1', 's3', 's4']);
 });
+test('markRead clears unread until a newer reply arrives', () => {
+  const s = appReducer(s0, { type: 'markRead', threadId: 'th1' });
+  expect(isUnread(s.threads.find(t => t.id === 'th1')!)).toBe(false);
+  expect(isUnread(s.threads.find(t => t.id === 'th3')!)).toBe(true);
+  const th1 = s.threads.find(t => t.id === 'th1')!;
+  const later = { ...th1, messages: [...th1.messages, { from: 'them' as const, text: 'new', at: '2099-01-01T00:00:00' }] };
+  expect(isUnread(later)).toBe(true);
+});

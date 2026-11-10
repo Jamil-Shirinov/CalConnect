@@ -49,3 +49,22 @@ test('narrow: Back clears the draft', async () => {
   fireEvent.press(screen.getByText('Marcus Johnson'));
   expect(screen.getByPlaceholderText('Type a message').props.value).toBe('');
 });
+
+test('opening a thread marks it read', async () => {
+  const { StyleSheet } = require('react-native');
+  const { fonts } = require('../theme/typography');
+  await renderApp('/messages', makeState());
+  const weight = () => StyleSheet.flatten(screen.getByText('Sarah Lin').props.style).fontFamily;
+  expect(weight()).toBe(fonts.bold);
+  fireEvent.press(screen.getByText('Sarah Lin'));
+  fireEvent.press(screen.getByText('‹ Back'));
+  expect(weight()).not.toBe(fonts.bold);
+});
+
+test('wide: the auto-selected first thread is marked read', async () => {
+  jest.spyOn(require('../hooks/useIsWide'), 'useIsWide').mockReturnValue(true);
+  const { StyleSheet } = require('react-native');
+  const { fonts } = require('../theme/typography');
+  await renderApp('/messages', makeState());
+  expect(StyleSheet.flatten(screen.getByText('Sarah Lin').props.style).fontFamily).not.toBe(fonts.bold);
+});

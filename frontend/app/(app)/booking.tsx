@@ -27,6 +27,7 @@ export default function Booking() {
   const [rateText, setRateText] = useState('');
   const [panelOpen, setPanelOpen] = useState(false);
   const [results, setResults] = useState<Tutor[] | null>(null);
+  const [resultsRange, setResultsRange] = useState<DateRange>(EMPTY);
 
   const openPanel = () => {
     if (!panelOpen) setRangeAtOpen(range);
@@ -34,6 +35,7 @@ export default function Booking() {
   };
   const apply = () => {
     setResults(filterTutors(state.tutors, { location, range, maxRate: rateOn ? parseRate(rateText) : null }));
+    setResultsRange(range);
     setPanelOpen(false);
   };
   const cancel = () => {
@@ -94,6 +96,7 @@ export default function Booking() {
                 key={tutor.id}
                 tutor={tutor}
                 today={state.today}
+                range={resultsRange}
                 onRequest={(date, course) => sendRequest(tutor.id, date, course)}
               />
             ))}

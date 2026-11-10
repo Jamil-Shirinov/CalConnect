@@ -44,6 +44,7 @@ export interface Thread {
   id: string;
   tutorId: string;
   messages: { from: 'me' | 'them'; text: string; at: string }[];
+  lastReadAt?: string;
 }
 
 export interface SessionRequest {
