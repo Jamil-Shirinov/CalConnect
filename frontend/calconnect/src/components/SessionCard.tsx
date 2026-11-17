@@ -5,24 +5,29 @@ import { setSessionStatus, useOther, useStore } from "@/lib/store";
 import { colors, radius } from "@/lib/theme";
 import { formatTime, formatDay, monthDay } from "@/lib/time";
 import type { Session, SessionStatus } from "@/lib/types";
-import { Button, Pill, Txt } from "./ui";
+import { Banner, Button, Pill, Txt } from "./ui";
 
 export function SessionCard({ session, actions }: { session: Session; actions?: boolean }) {
   const { user } = useStore();
   const other = useOther(session);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [confirmingCancel, setConfirmingCancel] = useState(false);
   const { month, day } = monthDay(session.start);
   const firstName = other?.name.split(" ")[0] ?? "them";
   const proposedByMe = session.proposedBy === user?.uid;
 
   const change = (status: SessionStatus) => async () => {
     setBusy(true);
+    setError(null);
     try {
       await setSessionStatus(session.id, status);
     } catch (err) {
       console.warn(err);
+      setError(status === "cancelled" ? "Couldn't cancel the session. Try again." : "Couldn't confirm the session. Try again.");
     } finally {
       setBusy(false);
+      setConfirmingCancel(false);
     }
   };
 
@@ -51,11 +56,24 @@ export function SessionCard({ session, actions }: { session: Session; actions?: 
             {session.status === "proposed" && !proposedByMe && (
               <Button small title="Confirm" loading={busy} onPress={change("confirmed")} />
             )}
-            <Pressable onPress={change("cancelled")} disabled={busy} style={styles.cancel}>
-              <Txt w="semibold" size={13} color={colors.danger}>Cancel session</Txt>
-            </Pressable>
+            {confirmingCancel ? (
+              <>
+                <Txt size={13} color={colors.ink}>Cancel this session?</Txt>
+                <Pressable onPress={change("cancelled")} disabled={busy} style={styles.cancel}>
+                  <Txt w="semibold" size={13} color={colors.danger}>Yes, cancel</Txt>
+                </Pressable>
+                <Pressable onPress={() => setConfirmingCancel(false)} disabled={busy} style={styles.cancel}>
+                  <Txt w="semibold" size={13} color={colors.navy}>Keep it</Txt>
+                </Pressable>
+              </>
+            ) : (
+              <Pressable onPress={() => setConfirmingCancel(true)} disabled={busy} style={styles.cancel}>
+                <Txt w="semibold" size={13} color={colors.danger}>Cancel session</Txt>
+              </Pressable>
+            )}
           </View>
         )}
+        {error && <View style={{ marginTop: 8 }}><Banner tone="error">{error}</Banner></View>}
       </View>
     </View>
   );
@@ -67,6 +85,6 @@ const styles = StyleSheet.create({
     width: 54, height: 58, borderRadius: radius.md, backgroundColor: colors.cream,
     alignItems: "center", justifyContent: "center"
   },
-  actions: { flexDirection: "row", alignItems: "center", gap: 14, marginTop: 8 },
+  actions: { flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 14, marginTop: 8 },
   cancel: { paddingVertical: 8 }
 });

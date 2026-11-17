@@ -4,7 +4,7 @@ import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 import { BackHeader } from "@/components/BackHeader";
-import { Empty, Txt } from "@/components/ui";
+import { Banner, Empty, Txt } from "@/components/ui";
 import { sendMessage, useMessages, useOther, useStore } from "@/lib/store";
 import { colors, fonts, radius } from "@/lib/theme";
 import { formatTime } from "@/lib/time";
@@ -16,13 +16,20 @@ export default function Chat() {
   const other = useOther(match);
   const messages = useMessages(match?.status === "accepted" ? matchId : undefined);
   const [text, setText] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const scroll = useRef<ScrollView>(null);
 
   const send = () => {
     const body = text.trim();
     if (!body || !matchId) return;
     setText("");
-    sendMessage(matchId, body).catch((err) => console.warn(err));
+    setError(null);
+    sendMessage(matchId, body).catch((err) => {
+      console.warn(err);
+      // Put the message back unless they've started typing another one.
+      setText((current) => current || body);
+      setError("Your message didn't send. Try again.");
+    });
   };
 
   return (
@@ -46,6 +53,7 @@ export default function Chat() {
           );
         })}
       </ScrollView>
+      {error && <View style={{ paddingHorizontal: 12 }}><Banner tone="error">{error}</Banner></View>}
       <View style={styles.composer}>
         <TextInput
           style={styles.input}
